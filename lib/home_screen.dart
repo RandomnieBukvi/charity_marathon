@@ -90,9 +90,9 @@ class HomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: ListView.builder(
-                  itemCount: topDonors.length,
+                  itemCount: topDonors.length - 3,
                   itemBuilder: (context, index) {
-                    return buildDonorTile(topDonors[index]['name'], topDonors[index]['amount'], index);
+                    return buildDonorTile(topDonors[index + 3]['name'], topDonors[index + 3]['amount'], index + 3);
                     // return ListTile(
                     //   title: Text(topDonors[index]['name']),
                     //   trailing: Text("\$${topDonors[index]['amount']}"),

@@ -4,8 +4,14 @@ import 'package:charity_marathon/registration_page.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -47,7 +53,7 @@ class MyApp extends StatelessWidget {
           floatingLabelStyle: TextStyle(color: Color(0xFF02a95c)),
         ),
       ),
-      home: LoginPage(),
+      home: HomeScreen(),
     );
   }
 }

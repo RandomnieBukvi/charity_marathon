@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "383493268051",
+    "project_id": "nismile-a575c",
+    "storage_bucket": "nismile-a575c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383493268051:android:a6c8d9c1224a86d7115ca6",
+        "android_client_info": {
+          "package_name": "com.example.charity_marathon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJv8UIa5TMjS_tV5MBJBa-r4LNEW7Agtw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
