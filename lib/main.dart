@@ -1,4 +1,5 @@
 import 'package:charity_marathon/auth.dart';
+import 'package:charity_marathon/payment_test.dart';
 import 'package:charity_marathon/widget_tree.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
           floatingLabelStyle: TextStyle(color: Color(0xFF02a95c)),
         ),
       ),
-      home: WidgetTree(),
+      home: DonationPage(),
     );
   }
 }

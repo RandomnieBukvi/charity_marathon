@@ -55,6 +55,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '383493268051',
     projectId: 'nismile-a575c',
     authDomain: 'nismile-a575c.firebaseapp.com',
+    databaseURL: 'https://nismile-a575c-default-rtdb.firebaseio.com',
     storageBucket: 'nismile-a575c.firebasestorage.app',
   );
 
@@ -63,6 +64,8 @@ class DefaultFirebaseOptions {
     appId: '1:383493268051:android:a6c8d9c1224a86d7115ca6',
     messagingSenderId: '383493268051',
     projectId: 'nismile-a575c',
+    databaseURL: 'https://nismile-a575c-default-rtdb.firebaseio.com',
     storageBucket: 'nismile-a575c.firebasestorage.app',
   );
+
 }
