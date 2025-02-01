@@ -1,3 +1,4 @@
+import 'package:charity_marathon/auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -33,7 +34,9 @@ class HomeScreen extends StatelessWidget {
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 foregroundColor: Theme.of(context).primaryColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Auth().signOut();
+              },
               child: Text("Register"),
             ),
           ],
@@ -58,6 +61,10 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 20),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text("Собрано: ${totalDonations}", style: TextStyle(color: Color(0xFF1B5E20), fontSize: 22, fontWeight: FontWeight.bold)),
+              Text("Цель: ${goal}", style: TextStyle(color: Color(0xFF1B5E20), fontSize: 22, fontWeight: FontWeight.bold))
+            ],),
             LinearProgressIndicator(
               value: totalDonations / goal,
               minHeight: 20,

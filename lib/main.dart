@@ -1,6 +1,5 @@
-import 'package:charity_marathon/home_screen.dart';
-import 'package:charity_marathon/login_page.dart';
-import 'package:charity_marathon/registration_page.dart';
+import 'package:charity_marathon/auth.dart';
+import 'package:charity_marathon/widget_tree.dart';
 import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
@@ -53,7 +52,7 @@ class MyApp extends StatelessWidget {
           floatingLabelStyle: TextStyle(color: Color(0xFF02a95c)),
         ),
       ),
-      home: HomeScreen(),
+      home: WidgetTree(),
     );
   }
 }

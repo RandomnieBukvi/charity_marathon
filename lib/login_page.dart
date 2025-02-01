@@ -1,6 +1,8 @@
 import 'package:charity_marathon/registration_page.dart';
 import 'package:flutter/material.dart';
 
+import 'auth.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -22,6 +24,8 @@ class _LoginPageState extends State<LoginPage> {
 
       // Здесь можно добавить логику для отправки данных (например, на сервер)
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Вход выполнен!')));
+
+      Auth().signIn(email, password);
     }
   }
 

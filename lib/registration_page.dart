@@ -1,3 +1,5 @@
+import 'package:charity_marathon/auth.dart';
+import 'package:charity_marathon/home_screen.dart';
 import 'package:charity_marathon/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +26,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
       // Здесь можно добавить логику для отправки данных (например, на сервер)
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Регистрация успешна!')));
+
+      Auth().signUp(email, password);
+      Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomeScreen()),
+                            );
     }
   }
 
