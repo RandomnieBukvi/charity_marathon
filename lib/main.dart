@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           floatingLabelStyle: TextStyle(color: Color(0xFF02a95c)),
         ),
       ),
-      home: DonationPage(),
+      home: WidgetTree(),
     );
   }
 }

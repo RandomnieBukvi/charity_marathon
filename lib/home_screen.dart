@@ -80,8 +80,7 @@ class HomeScreen extends StatelessWidget {
                   StreamBuilder(
                       stream: reference.child("total").onValue,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting)
-                          return Container();
+                        if (snapshot.connectionState == ConnectionState.waiting) return Container();
                         totalDonations =
                             (snapshot.data!.snapshot.value) as double;
                         return Column(
@@ -120,8 +119,10 @@ class HomeScreen extends StatelessWidget {
                       ElevatedButton(
                         style:
                             ElevatedButton.styleFrom(fixedSize: Size(300, 50)),
-                        onPressed: () {},
-                        child: Text("Donate"),
+                        onPressed: () {
+                          showDonationDialog(context);
+                        },
+                        child: Text("Задонатить"),
                       ),
                     ],
                   ),
@@ -194,7 +195,10 @@ class MarqueeWidget extends StatelessWidget {
         snapshot.data!.snapshot.children.forEach((element) {
           donations.addAll({element.key: element.value});
         });
-        List donations_list = donations.entries.toList().reversed.toList();
+        List donations_list = donations.entries.toList().toList();
+        donations_list
+                  .sort((a, b) => a.value["timestamp"].compareTo(b.value["timestamp"]));
+        donations_list = donations_list.reversed.toList();
         int count = donations_list.length;
         if (donations_list.length > 15) count = 15;
         return ListView.builder(
@@ -226,7 +230,6 @@ class MarqueeWidget extends StatelessWidget {
 }
 
 Widget buildDonorTile(String name, int amount, int index) {
-  print("SDFJSFDKFKDSLKJFDSJK");
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     child: Container(
@@ -250,11 +253,163 @@ Widget buildDonorTile(String name, int amount, int index) {
           name,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        subtitle: Text("Donated: \$${amount}",
+        subtitle: Text("Задонатил: \$${amount}",
             style: TextStyle(color: Colors.green[900])),
         trailing:
             Icon(Icons.military_tech, color: Colors.amber, size: 30), // Медаль
       ),
     ),
   );
+}
+
+Future<int?> getTotalById(String id) async {
+  DatabaseReference usersRef = FirebaseDatabase.instance.ref("users");
+
+  try {
+    // Получаем данные пользователя по id
+    DataSnapshot snapshot = await usersRef.child(id).get();
+
+    if (snapshot.exists) {
+      // Возвращаем значение total
+      return snapshot.child('total').value as int?;
+    } else {
+      print("Пользователь с id: $id не найден");
+      return null; // Пользователь не найден
+    }
+  } catch (error) {
+    print("Ошибка при получении total: $error");
+    return null;
+  }
+}
+
+
+void showDonationDialog(BuildContext context) {
+  TextEditingController amountController = TextEditingController();
+  
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: Text("Поддержите марафон", textAlign: TextAlign.center),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Введите сумму доната:", textAlign: TextAlign.center),
+            SizedBox(height: 10),
+            TextField(
+              controller: amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: "Например, 500",
+                prefixIcon: Icon(Icons.attach_money),
+              ),
+            ),
+            SizedBox(height: 15),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("Отмена"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              String amount = amountController.text.trim();
+              if (amount.isNotEmpty && double.tryParse(amount) != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Спасибо за донат в размере $amount ₸! 🎉")),
+                );
+                String? id = await findUserIdByEmail(Auth().currentUser!.email);
+                if (id != null){
+                  String? name = await getNameById(id);
+                  if(name != null){
+                    createDonation(double.parse(amount), id, name);
+                  }
+                }
+                Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Введите корректную сумму!")),
+                );
+              }
+            },
+            child: Text("Донатить"),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<String?> findUserIdByEmail(String? email) async {
+  DatabaseReference usersRef = FirebaseDatabase.instance.ref("users");
+  if(email == null) return null;
+  try {
+    DatabaseEvent event = await usersRef.once();
+    DataSnapshot snapshot = event.snapshot;
+
+    if (snapshot.value != null) {
+      Map<dynamic, dynamic> users = snapshot.value as Map<dynamic, dynamic>;
+
+      for (var entry in users.entries) {
+        Map<dynamic, dynamic> userData = entry.value;
+        if (userData["email"] == email) {
+          return entry.key; // Возвращаем ID пользователя
+        }
+      }
+    }
+  } catch (e) {
+    print("Ошибка при поиске пользователя: $e");
+  }
+
+  return null; // Если email не найден
+}
+
+Future<String?> getNameById(String id) async {
+  DatabaseReference usersRef = FirebaseDatabase.instance.ref("users");
+
+  try {
+    // Get the data for the specified user ID
+    DataSnapshot snapshot = await usersRef.child(id).get();
+
+    if (snapshot.exists) {
+      // If the user exists, get the name
+      return snapshot.child('name').value.toString();
+    } else {
+      print("No user found with id: $id");
+      return null; // User not found
+    }
+  } catch (error) {
+    print("Error fetching name: $error");
+    return null;
+  }
+}
+
+Future<void> createDonation(double amount, String id, String name) async {
+  DatabaseReference reference = FirebaseDatabase.instance.ref();
+
+  // Create a new donation entry with random key
+  DatabaseReference newDonationRef = reference.child("donates").push();
+  String key = newDonationRef.key as String;
+  int timestamp = DateTime.now().millisecondsSinceEpoch;
+  // Set donation data
+  await newDonationRef.set({
+    'amount': amount,
+    'id': id,
+    'name': name,
+    'timestamp': timestamp,
+  }).catchError((error) {
+    print("Failed to add donation: $error");
+  });
+
+  await reference.child("users").child(id).child("donation_history").child(key).set(timestamp);
+
+  int total = await getTotalById(id) as int;
+
+  await reference.child("users").child(id).child("total").set(total + amount);
+
+  int global_total = (await reference.child("total").get()).value as int;
+
+  await reference.child("total").set(global_total + amount);
 }
